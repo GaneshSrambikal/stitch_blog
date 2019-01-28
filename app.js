@@ -9,15 +9,21 @@ const mongodb = client.getServiceClient(
 );
 
 // get a reference to blog database
-const db = mongodb.db("blog");
+const db = mongodb.db("blg");
 
-//Query and display comments on Pageload
+//Query and display comments 
 function displayComments() {
-    db.collection("comments")
-        .find({}, { limit: 1000 })
+    db.collection("coments")
+        .find({}, { limit: 100 })
         .toArray()
         .then(docs => {
-            const html = docs.map(doc => `<p class="h3 card-title">${doc.comment}</p><div class="h6 card-text"><small>by UserId:</small> ${doc.owner_id}</div>`);
+            const html = docs.map(doc => `
+            <div class="card">
+            <div class="card-body">
+            <h5 class="card-title">${doc.comment}</h5>
+            <p class="card-text"><small>UserId: </small>${doc.owner_id}</p>
+            </div>
+            </div>`);
             document.getElementById("comments").innerHTML = html;
         });
 }
@@ -34,7 +40,7 @@ function displayCommentsOnload() {
 function addComment() {
     const newComment = document.getElementById("new_comment");
     console.log("add comment", client.auth.user.id)
-    db.collection("comments")
+    db.collection("coments")
         .insertOne({ owner_id: client.auth.user.id, comment: newComment.value })
         .then(displayComments);
     newComment.value = "";
